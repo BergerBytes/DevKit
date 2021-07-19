@@ -1,3 +1,3 @@
 # Debug
 
-A description of this package.
+A simple collection of debug tools.
