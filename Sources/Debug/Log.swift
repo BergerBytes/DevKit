@@ -4,9 +4,19 @@ import os.log
 extension Debug {
     public struct Log {
         public struct Configuration {
-            let printToConsole: Bool = true
-            let printToOS: Bool = true
-            let blockAllLogs: Bool = false
+            let printToConsole: Bool
+            let printToOS: Bool
+            let blockAllLogs: Bool
+            
+            public init(
+                printToConsole: Bool = true,
+                printToOS: Bool = true,
+                blockAllLogs: Bool = false
+            ) {
+                self.printToConsole = printToConsole
+                self.printToOS = printToConsole
+                self.blockAllLogs = blockAllLogs
+            }
         }
         
         /// Extendable list of log types for a clear console and easy filtering.
