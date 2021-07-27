@@ -14,7 +14,7 @@ extension Debug {
                 blockAllLogs: Bool = false
             ) {
                 self.printToConsole = printToConsole
-                self.printToOS = printToConsole
+                self.printToOS = printToOS
                 self.blockAllLogs = blockAllLogs
             }
         }
