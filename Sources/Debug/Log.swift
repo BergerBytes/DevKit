@@ -156,13 +156,15 @@ extension Debug {
     public static func log(error: Error?,
                            file: String     = #file,
                            function: String = #function,
-                           line: Int        = #line) {
-        guard let error = error else { return }
+                           line: Int        = #line) -> String {
+        guard let error = error else { return "" }
         
-        log(error.localizedDescription,
+        return log(
+            error.localizedDescription,
             level: .error,
             file: file,
             function: function,
-            line: line)
+            line: line
+        )
     }
 }
