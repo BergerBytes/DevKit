@@ -3,6 +3,8 @@ import os.log
 
 extension Debug {
     public struct Log {
+        public static var configuration = Configuration()
+
         public struct Configuration {
             let printToConsole: Bool
             let printToOS: Bool
@@ -61,9 +63,6 @@ extension Debug {
 extension Debug {
     private static var subsystem = Bundle.main.bundleIdentifier!
     
-    public static var configuration = Debug.Log.Configuration()
-    
-    
     /// Logs the string representation of the message object to the console
     /// along with the type and location of the call.
     ///
@@ -73,7 +72,7 @@ extension Debug {
     ///
     /// ~~~
     /// Debug.log("Hello, World")
-    /// Debug.log("Hello, World", type: .startup)
+    /// Debug.log("Hello, World", level: .startup)
     /// ~~~
     @discardableResult
     public static func log( _ message: Any?,
@@ -82,7 +81,7 @@ extension Debug {
                             function: String = #function,
                             line: Int        = #line) -> String {
         
-        if configuration.blockAllLogs {
+        if Log.configuration.blockAllLogs {
             return ""
         }
         
@@ -99,12 +98,12 @@ extension Debug {
         let log = "\(level.prefix) \(message)  ->  \(fileName).\(function) [\(line)]"
         
         // Print the log if we are debugging.
-        if configuration.printToConsole {
+        if Log.configuration.printToConsole {
             print(log)
         }
         
         // Send the log to the OS to allow for seeing logs when running on a disconnected device using Console.app
-        if configuration.printToOS {
+        if Log.configuration.printToOS {
             if
                 #available(macOS 10.12, *),
                 #available(iOS 10.0, *)
@@ -142,7 +141,7 @@ extension Debug {
                            function: String   = #function,
                            line: Int          = #line) -> String {
         
-        if configuration.blockAllLogs {
+        if Log.configuration.blockAllLogs {
             return ""
         }
         
@@ -153,6 +152,7 @@ extension Debug {
     ///
     /// - Parameters:
     ///   - error: The error to log.
+    @discardableResult
     public static func log(error: Error?,
                            file: String     = #file,
                            function: String = #function,
