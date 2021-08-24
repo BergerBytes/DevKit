@@ -160,7 +160,7 @@ extension Debug {
         guard let error = error else { return "" }
         
         return log(
-            error.localizedDescription,
+            error,
             level: .error,
             file: file,
             function: function,
