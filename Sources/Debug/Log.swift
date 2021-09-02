@@ -4,20 +4,33 @@ import os.log
 extension Debug {
     public struct Log {
         public static var configuration = Configuration()
+        
+        /// Storage for all local logs made via Loggable conforming objects.
+        internal static var localLogs = [Int: [String]]()
 
         public struct Configuration {
             let printToConsole: Bool
             let printToOS: Bool
             let blockAllLogs: Bool
             
+            /// Should loggable object have their logs stored in memory.
+            let loggableEnabled: Bool
+            
+            // Number of logs to store per loggable object.
+            let loggableLimit: Int
+            
             public init(
                 printToConsole: Bool = true,
-                printToOS: Bool = true,
-                blockAllLogs: Bool = false
+                printToOS: Bool = false,
+                blockAllLogs: Bool = false,
+                loggableEnabled: Bool = true,
+                loggableLimit: Int = 50
             ) {
                 self.printToConsole = printToConsole
                 self.printToOS = printToOS
                 self.blockAllLogs = blockAllLogs
+                self.loggableEnabled = loggableEnabled
+                self.loggableLimit = loggableLimit
             }
         }
         
@@ -74,6 +87,7 @@ extension Debug {
     /// Debug.log("Hello, World")
     /// Debug.log("Hello, World", level: .startup)
     /// ~~~
+    /// - Warning: The computed property version of log is recommended. This will likely be deprecated in the future. See ``log(level:_:file:function:line:)``
     @discardableResult
     public static func log( _ message: Any?,
                             level: Log.Level = .standard,
@@ -160,8 +174,8 @@ extension Debug {
         guard let error = error else { return "" }
         
         return log(
-            error,
             level: .error,
+            { error },
             file: file,
             function: function,
             line: line
