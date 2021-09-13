@@ -38,6 +38,10 @@ extension Debug {
         public struct Level: Equatable {
             public let prefix: String
             
+            public init(prefix: String) {
+                self.prefix = prefix
+            }
+            
             public static let standard   = Level(prefix: "🔵")
             public static let low        = Level(prefix: "⚫️")
             public static let warning    = Level(prefix: "⚠️")
