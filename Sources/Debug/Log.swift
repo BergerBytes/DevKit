@@ -3,13 +3,14 @@ import os.log
 
 extension Debug {
     public struct Log {
+        public typealias LogCallback = (String) -> Void
         public static var configuration = Configuration()
+        public static var callback: LogCallback?
         
         /// Storage for all local logs made via Loggable conforming objects.
         internal static var localLogs = [Int: [String]]()
 
         public struct Configuration {
-            public typealias LogCallback = (String) -> Void
             
             let printToConsole: Bool
             let printToOS: Bool
@@ -20,23 +21,19 @@ extension Debug {
             
             // Number of logs to store per loggable object.
             let loggableLimit: Int
-            
-            let logCallback: LogCallback?
-            
+                        
             public init(
                 printToConsole: Bool = true,
                 printToOS: Bool = false,
                 blockAllLogs: Bool = false,
                 loggableEnabled: Bool = true,
-                loggableLimit: Int = 50,
-                logCallback: LogCallback? = nil
+                loggableLimit: Int = 50
             ) {
                 self.printToConsole = printToConsole
                 self.printToOS = printToOS
                 self.blockAllLogs = blockAllLogs
                 self.loggableEnabled = loggableEnabled
                 self.loggableLimit = loggableLimit
-                self.logCallback = logCallback
             }
         }
         
@@ -137,7 +134,7 @@ extension Debug {
         }
         
         // Invoke the log callback with the generated log
-        Log.configuration.logCallback?(log)
+        Log.callback?(log)
         
         return log
     }
