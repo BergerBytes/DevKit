@@ -3,7 +3,7 @@ import os.log
 
 extension Debug {
     public struct Log {
-        public typealias LogCallback = (String) -> Void
+        public typealias LogCallback = (Level, String) -> Void
         public static var configuration = Configuration()
         public static var callback: LogCallback?
         
@@ -134,7 +134,7 @@ extension Debug {
         }
         
         // Invoke the log callback with the generated log
-        Log.callback?(log)
+        Log.callback?(level, log)
         
         return log
     }
