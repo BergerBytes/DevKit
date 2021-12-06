@@ -15,13 +15,15 @@ extension Debug {
     
     public static func assertionFailure(
         _ message: Any?,
+        params: [String: Any?]? = nil,
         file: String     = #file,
         function: String = #function,
         line: Int        = #line
     ) {
         let log = Debug.log(
-            message,
             level: .error,
+            message,
+            params: params,
             file: file,
             function: function,
             line: line

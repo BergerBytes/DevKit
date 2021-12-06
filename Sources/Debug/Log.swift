@@ -3,7 +3,8 @@ import os.log
 
 extension Debug {
     public struct Log {
-        public typealias LogCallback = (Level, String) -> Void
+        public typealias Log = (message: String, params: [String: Any?]?)
+        public typealias LogCallback = (Level, Log) -> Void
         public static var configuration = Configuration()
         public static var callback: LogCallback?
         
@@ -94,13 +95,15 @@ extension Debug {
     /// Debug.log("Hello, World")
     /// Debug.log("Hello, World", level: .startup)
     /// ~~~
-    /// - Warning: The computed property version of log is recommended. This will likely be deprecated in the future. See ``log(level:_:file:function:line:)``
     @discardableResult
-    public static func log( _ message: Any?,
-                            level: Log.Level = .standard,
-                            file: String     = #file,
-                            function: String = #function,
-                            line: Int        = #line) -> String {
+    public static func log(
+        level: Log.Level = .standard,
+        _ message: Any?,
+        params: [String: Any?]? = nil,
+        file: String     = #file,
+        function: String = #function,
+        line: Int        = #line
+    ) -> String {
         
         if Log.configuration.blockAllLogs {
             return ""
@@ -109,18 +112,23 @@ extension Debug {
         // Convert the message object to a string format. This will convert the same way Xcode would when debugging.
         let message = message.map { String(describing: $0) } ?? String(describing: message)
         
+        let paramsSpace = "\(params == nil ? "" : " ")"
+        let paramsString = (params?
+            .mapValues { value in value.map { String(describing: $0) } ?? "nil" })
+            .map { String(describing: $0) } ?? ""
+            
         // Extract the file name from the path.
         let fileString = file as NSString
         let fileLastPathComponent = fileString.lastPathComponent as NSString
         let fileName = fileLastPathComponent.deletingPathExtension
         
-        // Build the log; formatting the log into the desired format.
-        // This could be expanded on for support for changing the format at runtime or per-developer.
-        let log = "\(level.prefix) \(message)  ->  \(fileName).\(function) [\(line)]"
+        let printLog = Log.configuration.printToConsole || Log.configuration.printToOS
+        ? "\(level.prefix) \(message)\(paramsSpace)\(paramsString) ->  \(fileName).\(function) [\(line)]"
+        : ""
         
         // Print the log if we are debugging.
         if Log.configuration.printToConsole {
-            print(log)
+            print(printLog)
         }
         
         // Send the log to the OS to allow for seeing logs when running on a disconnected device using Console.app
@@ -129,12 +137,17 @@ extension Debug {
                 #available(macOS 10.12, *),
                 #available(iOS 10.0, *)
             {
-                os_log("%@", log: OSLog(subsystem: subsystem, category: file), type: level.osLogType, log)
+                let printLog = "\(level.prefix) \(message)\(paramsSpace)\(paramsString) ->  \(fileName).\(function) [\(line)]"
+                os_log("%@", log: OSLog(subsystem: subsystem, category: file), type: level.osLogType, printLog)
             }
         }
         
+        // Build the log; formatting the log into the desired format.
+        // This could be expanded on for support for changing the format at runtime or per-developer.
+        let log = "\(level.prefix) \(message) -> \(fileName).\(function) [\(line)]"
+        
         // Invoke the log callback with the generated log
-        Log.callback?(level, log)
+        Log.callback?(level, (log, params))
         
         return log
     }
@@ -169,7 +182,7 @@ extension Debug {
             return ""
         }
         
-        return log(computedMessage(), level: level, file: file, function: function, line: line)
+        return log(level: level, computedMessage(), params: nil, file: file, function: function, line: line)
     }
     
     /// A convenience log to automatically use the localizedDescription of the given error.
