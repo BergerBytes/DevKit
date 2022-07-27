@@ -13,6 +13,45 @@ extension Debug {
         }
     }
     
+    public static func assert(
+        _ assertion: () -> Bool,
+        message: Any?,
+        params: [String: Any?]? = nil,
+        file: String     = #file,
+        function: String = #function,
+        line: Int        = #line
+    ) {
+        Self.assert(
+            assertion(),
+            message: message,
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
+    
+    public static func assert(
+        _ assertion: Bool,
+        message: Any?,
+        params: [String: Any?]? = nil,
+        file: String     = #file,
+        function: String = #function,
+        line: Int        = #line
+    ) {
+        if assertion {
+            return
+        }
+        
+        assertionFailure(
+            message,
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
+    
     public static func assertionFailure(
         _ message: Any?,
         params: [String: Any?]? = nil,
