@@ -4,22 +4,27 @@ public protocol DebugLoggable: Hashable {}
 
 extension DebugLoggable {
     @discardableResult
-    public func log(level: Debug.Log.Level = .standard,
-                    _ computedMessage: () -> Any?,
-                    file: String       = #file,
-                    function: String   = #function,
-                    line: Int          = #line) -> String  {
+    public func log(
+        _ level: Debug.Log.Level  = .standard,
+        in scope: Debug.Log.Scope? = nil,
+        _ computedMessage: () -> Any?,
+        file: String            = #file,
+        function: String        = #function,
+        line: Int               = #line
+    ) -> String  {
         Self.add(
-            log: Debug.log(level: level, computedMessage, file: file, function: function, line: line),
+            log: Debug.log(level, in: scope, computedMessage, file: file, function: function, line: line),
             to: hashValue
         )
     }
     
     @discardableResult
-    public func log(error: Error?,
-                    file: String     = #file,
-                    function: String = #function,
-                    line: Int        = #line) -> String {
+    public func log(
+        error: Error?,
+        file: String     = #file,
+        function: String = #function,
+        line: Int        = #line
+    ) -> String {
         Self.add(
             log: Debug.log(error: error, file: file, function: function, line: line),
             to: hashValue

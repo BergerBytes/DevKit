@@ -53,6 +53,7 @@ extension Debug {
     }
     
     public static func assertionFailure(
+        scope: Log.Scope? = nil,
         _ message: Any?,
         params: [String: Any?]? = nil,
         file: String     = #file,
@@ -60,7 +61,8 @@ extension Debug {
         line: Int        = #line
     ) {
         let log = Debug.log(
-            level: .error,
+            .error,
+            in: scope,
             message,
             params: params,
             file: file,
