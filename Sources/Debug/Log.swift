@@ -48,6 +48,11 @@ extension Debug {
                 self.symbol = symbol
             }
             
+            @available(*, deprecated, renamed: "init()")
+            public init(prefix symbol: String) {
+                self.symbol = symbol
+            }
+            
             public static let info       = Level("⚪️")
             public static let standard   = Level("🔵")
             public static let warning    = Level("⚠️")
