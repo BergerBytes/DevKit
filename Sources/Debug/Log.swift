@@ -112,52 +112,108 @@ public extension Debug {
 }
 
 public extension Debug.Log {
+    // MARK: - INFO
+
     @discardableResult
     static func info(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: [String: Any?]? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        Debug.log(Level.info, in: scope, message(), params: params, file: file, function: function, line: line)
+        Debug.log(.info, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
+
+    @discardableResult
+    static func info(
+        in scope: Scope? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        info(in: scope, message(), params: params(), file: file, function: function, line: line)
+    }
+
+    // MARK: - DEBUG
 
     @discardableResult
     static func debug(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: [String: Any?]? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        Debug.log(Level.standard, in: scope, message(), params: params, file: file, function: function, line: line)
+        Debug.log(.standard, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
+
+    @discardableResult
+    static func debug(
+        in scope: Scope? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        debug(in: scope, message(), params: params(), file: file, function: function, line: line)
+    }
+
+    // MARK: - WARNING
 
     @discardableResult
     static func warning(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: [String: Any?]? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        Debug.log(Level.warning, in: scope, message(), params: params, file: file, function: function, line: line)
+        Debug.log(.warning, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
+
+    @discardableResult
+    static func warning(
+        in scope: Scope? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        warning(in: scope, message(), params: params(), file: file, function: function, line: line)
+    }
+
+    // MARK: - ERROR
 
     @discardableResult
     static func error(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: [String: Any?]? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        Debug.log(Level.error, in: scope, message(), params: params, file: file, function: function, line: line)
+        Debug.log(.error, in: scope, message(), params: params(), file: file, function: function, line: line)
+    }
+
+    @discardableResult
+    static func error(
+        in scope: Scope? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        error(in: scope, message(), params: params(), file: file, function: function, line: line)
     }
 }
 
@@ -169,12 +225,12 @@ public extension Debug {
         _ level: Log.Level,
         in scope: Log.Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: [String: Any?]? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(level: level, in: scope, message(), params: params, file: file, function: function, line: line)
+        log(level: level, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
 
     @discardableResult
@@ -201,11 +257,11 @@ public extension Debug {
     /// Debug.log("Hello, World", level: .startup)
     /// ~~~
     @discardableResult
-    static func log<T: Any>(
+    static func log(
         level: Log.Level,
         in scope: Log.Scope? = nil,
-        _ message: @autoclosure () -> T?,
-        params: [String: Any?]? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -217,6 +273,8 @@ public extension Debug {
         let evaluatedMessage = message()
         // Convert the message object to a string format. This will convert the same way Xcode would when debugging.
         let message = evaluatedMessage.map { String(describing: $0) } ?? String(describing: evaluatedMessage)
+
+        let params = params()
 
         let paramsSpace = "\(params == nil ? "" : " ")"
         let paramsString = (params?

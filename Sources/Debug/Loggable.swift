@@ -7,7 +7,7 @@ public extension DebugLoggable {
     func log(
         _ level: Debug.Log.Level = .standard,
         in scope: Debug.Log.Scope? = nil,
-        _ computedMessage: () -> Any?,
+        _ computedMessage: @escaping () -> Any?,
         file: String = #file,
         function: String = #function,
         line: Int = #line
