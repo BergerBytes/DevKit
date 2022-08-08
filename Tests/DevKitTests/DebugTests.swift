@@ -1,4 +1,4 @@
-//  Copyright © 2021 BergerBytes LLC. All rights reserved.
+//  Copyright © 2022 BergerBytes LLC. All rights reserved.
 //
 //  Permission to use, copy, modify, and/or distribute this software for any
 //  purpose with or without fee is hereby granted, provided that the above
@@ -12,6 +12,22 @@
 //  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
 //  IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import Foundation
+import DevKit
+import XCTest
 
-extension Debug { }
+final class DebugTests: XCTestCase {
+    func testExample() {
+        Log.custom(.warning, "Careful!")
+        Log.custom(.warning, in: .startup, "Careful!")
+        Log.custom(.error, "You didn't listen!!")
+
+        Log.info("nothing really going on")
+        Log.info(in: .database, "saved data to disk")
+
+        Log.debug(in: .database, "Missed cache hit")
+
+        Log.warning(in: .database, "Missing data!", params: ["collection": "store"])
+
+        Log.error(in: .database, "ALL DATA GONE!")
+    }
+}

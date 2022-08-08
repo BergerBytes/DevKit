@@ -1,4 +1,4 @@
-//  Copyright © 2021 BergerBytes LLC. All rights reserved.
+//  Copyright © 2022 BergerBytes LLC. All rights reserved.
 //
 //  Permission to use, copy, modify, and/or distribute this software for any
 //  purpose with or without fee is hereby granted, provided that the above
@@ -15,103 +15,99 @@
 import Foundation
 import os.log
 
-public typealias Log = Debug.Log
+public enum Log {
+    public typealias Log = (message: String, params: [String: Any?]?)
+    public typealias LogCallback = (Level, Log) -> Void
+    public static var configuration = Configuration()
+    public static var callback: LogCallback?
 
-public extension Debug {
-    enum Log {
-        public typealias Log = (message: String, params: [String: Any?]?)
-        public typealias LogCallback = (Level, Log) -> Void
-        public static var configuration = Configuration()
-        public static var callback: LogCallback?
+    /// Storage for all local logs made via Loggable conforming objects.
+    internal static var localLogs = [Int: [String]]()
 
-        /// Storage for all local logs made via Loggable conforming objects.
-        internal static var localLogs = [Int: [String]]()
+    public struct Configuration {
+        let printToConsole: Bool
+        let printToOS: Bool
+        let blockAllLogs: Bool
 
-        public struct Configuration {
-            let printToConsole: Bool
-            let printToOS: Bool
-            let blockAllLogs: Bool
+        /// Should loggable object have their logs stored in memory.
+        let loggableEnabled: Bool
 
-            /// Should loggable object have their logs stored in memory.
-            let loggableEnabled: Bool
+        // Number of logs to store per loggable object.
+        let loggableLimit: Int
 
-            // Number of logs to store per loggable object.
-            let loggableLimit: Int
+        public init(
+            printToConsole: Bool = true,
+            printToOS: Bool = false,
+            blockAllLogs: Bool = false,
+            loggableEnabled: Bool = true,
+            loggableLimit: Int = 50
+        ) {
+            self.printToConsole = printToConsole
+            self.printToOS = printToOS
+            self.blockAllLogs = blockAllLogs
+            self.loggableEnabled = loggableEnabled
+            self.loggableLimit = loggableLimit
+        }
+    }
 
-            public init(
-                printToConsole: Bool = true,
-                printToOS: Bool = false,
-                blockAllLogs: Bool = false,
-                loggableEnabled: Bool = true,
-                loggableLimit: Int = 50
-            ) {
-                self.printToConsole = printToConsole
-                self.printToOS = printToOS
-                self.blockAllLogs = blockAllLogs
-                self.loggableEnabled = loggableEnabled
-                self.loggableLimit = loggableLimit
-            }
+    /// Extendable list of log types for a clear console and easy filtering.
+    public struct Level: Equatable {
+        public let symbol: String
+
+        public init(_ symbol: String) {
+            self.symbol = symbol
         }
 
-        /// Extendable list of log types for a clear console and easy filtering.
-        public struct Level: Equatable {
-            public let symbol: String
-
-            public init(_ symbol: String) {
-                self.symbol = symbol
-            }
-
-            @available(*, deprecated, renamed: "init()")
-            public init(prefix symbol: String) {
-                self.symbol = symbol
-            }
-
-            public static let info = Level("⚪️")
-            public static let standard = Level("🔵")
-            public static let warning = Level("⚠️")
-            public static let error = Level("❌")
-
-            @available(macOS 10.12, *)
-            @available(iOS 10.0, *)
-            var osLogType: OSLogType {
-                switch self {
-                case .info:
-                    return .info
-                case .warning:
-                    return .fault
-                case .error:
-                    return .error
-                case .standard:
-                    return .debug
-                default:
-                    return .debug
-                }
-            }
+        @available(*, deprecated, renamed: "init()")
+        public init(prefix symbol: String) {
+            self.symbol = symbol
         }
 
-        public struct Scope: Equatable {
-            public let symbol: String
-            public init(_ symbol: String) {
-                self.symbol = symbol
+        public static let info = Level("⚪️")
+        public static let standard = Level("🔵")
+        public static let warning = Level("⚠️")
+        public static let error = Level("❌")
+
+        @available(macOS 10.12, *)
+        @available(iOS 10.0, *)
+        var osLogType: OSLogType {
+            switch self {
+            case .info:
+                return .info
+            case .warning:
+                return .fault
+            case .error:
+                return .error
+            case .standard:
+                return .debug
+            default:
+                return .debug
             }
-
-            public static let database = Scope("💾")
-            public static let auth = Scope("🔒")
-            public static let connection = Scope("🌎")
-            public static let gps = Scope("🗺")
-            public static let startup = Scope("🎬")
-            public static let keychain = Scope("🔑")
-            public static let payment = Scope("💳")
-
-            // The number types are only used for debugging.
-            public static let one = Scope("1️⃣")
-            public static let two = Scope("2️⃣")
-            public static let three = Scope("3️⃣")
         }
+    }
+
+    public struct Scope: Equatable {
+        public let symbol: String
+        public init(_ symbol: String) {
+            self.symbol = symbol
+        }
+
+        public static let database = Scope("💾")
+        public static let auth = Scope("🔒")
+        public static let connection = Scope("🌎")
+        public static let gps = Scope("🗺")
+        public static let startup = Scope("🎬")
+        public static let keychain = Scope("🔑")
+        public static let payment = Scope("💳")
+
+        // The number types are only used for debugging.
+        public static let one = Scope("1️⃣")
+        public static let two = Scope("2️⃣")
+        public static let three = Scope("3️⃣")
     }
 }
 
-public extension Debug.Log {
+public extension Log {
     // MARK: - INFO
 
     @discardableResult
@@ -123,7 +119,7 @@ public extension Debug.Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        Debug.log(.info, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(.info, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
 
     @discardableResult
@@ -149,7 +145,7 @@ public extension Debug.Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        Debug.log(.standard, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(.standard, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
 
     @discardableResult
@@ -175,7 +171,7 @@ public extension Debug.Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        Debug.log(.warning, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(.warning, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
 
     @discardableResult
@@ -201,7 +197,7 @@ public extension Debug.Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        Debug.log(.error, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(.error, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
 
     @discardableResult
@@ -215,15 +211,43 @@ public extension Debug.Log {
     ) -> String {
         error(in: scope, message(), params: params(), file: file, function: function, line: line)
     }
+
+    // MARK: - CUSTOM
+
+    @discardableResult
+    static func custom(
+        _ level: Level,
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(level, in: scope, message(), params: params(), file: file, function: function, line: line)
+    }
+
+    @discardableResult
+    static func custom(
+        _ level: Level,
+        in scope: Scope? = nil,
+        params: @autoclosure () -> [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        custom(level, in: scope, message(), params: params(), file: file, function: function, line: line)
+    }
 }
 
-public extension Debug {
+extension Log {
     private static var subsystem = Bundle.main.bundleIdentifier!
 
     @discardableResult
     static func log(
-        _ level: Log.Level,
-        in scope: Log.Scope? = nil,
+        _ level: Level,
+        in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
         params: @autoclosure () -> [String: Any?]? = nil,
         file: String = #file,
@@ -235,7 +259,7 @@ public extension Debug {
 
     @discardableResult
     static func log(
-        in scope: Log.Scope? = nil,
+        in scope: Scope? = nil,
         _ message: Any?,
         params: [String: Any?]? = nil,
         file: String = #file,
@@ -258,15 +282,15 @@ public extension Debug {
     /// ~~~
     @discardableResult
     static func log(
-        level: Log.Level,
-        in scope: Log.Scope? = nil,
+        level: Level,
+        in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
         params: @autoclosure () -> [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        if Log.configuration.blockAllLogs {
+        if configuration.blockAllLogs {
             return ""
         }
 
@@ -288,17 +312,17 @@ public extension Debug {
 
         let scope = scope.map { " \($0.symbol) " } ?? " "
 
-        let printLog = Log.configuration.printToConsole || Log.configuration.printToOS
+        let printLog = configuration.printToConsole || configuration.printToOS
             ? "\(level.symbol)\(scope)\(message)\(paramsSpace)\(paramsString) ->  \(fileName).\(function) [\(line)]"
             : ""
 
         // Print the log if we are debugging.
-        if Log.configuration.printToConsole {
+        if configuration.printToConsole {
             print(printLog)
         }
 
         // Send the log to the OS to allow for seeing logs when running on a disconnected device using Console.app
-        if Log.configuration.printToOS {
+        if configuration.printToOS {
             if
                 #available(macOS 10.12, *),
                 #available(iOS 10.0, *)
@@ -313,7 +337,7 @@ public extension Debug {
         let log = "\(level.symbol) \(message) -> \(fileName).\(function) [\(line)]"
 
         // Invoke the log callback with the generated log
-        Log.callback?(level, (log, params))
+        callback?(level, (log, params))
 
         return log
     }
@@ -339,41 +363,17 @@ public extension Debug {
     /// ~~~
     @discardableResult
     static func log(
-        _ level: Log.Level = .standard,
-        in scope: Log.Scope? = nil,
+        _ level: Level = .standard,
+        in scope: Scope? = nil,
         _ computedMessage: () -> Any?,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        if Log.configuration.blockAllLogs {
+        if configuration.blockAllLogs {
             return ""
         }
 
         return log(level, in: scope, computedMessage(), params: nil, file: file, function: function, line: line)
-    }
-
-    /// A convenience log to automatically use the localizedDescription of the given error.
-    ///
-    /// - Parameters:
-    ///   - error: The error to log.
-    @discardableResult
-    static func log(
-        error: Error?,
-        in scope: Log.Scope? = nil,
-        file: String = #file,
-        function: String = #function,
-        line: Int = #line
-    ) -> String {
-        guard let error = error else { return "" }
-
-        return log(
-            .error,
-            in: scope,
-            { error },
-            file: file,
-            function: function,
-            line: line
-        )
     }
 }
