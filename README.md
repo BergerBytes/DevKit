@@ -1,3 +1,3 @@
-# Debug
+# DevKit
 
-A simple collection of debug tools.
+A collection of development tools.
