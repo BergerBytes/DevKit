@@ -115,6 +115,7 @@ public extension Debug.Log {
     // MARK: - INFO
 
     @discardableResult
+    @inlinable
     static func info(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -127,6 +128,7 @@ public extension Debug.Log {
     }
 
     @discardableResult
+    @inlinable
     static func info(
         in scope: Scope? = nil,
         params: @autoclosure () -> [String: Any?]? = nil,
@@ -141,6 +143,7 @@ public extension Debug.Log {
     // MARK: - DEBUG
 
     @discardableResult
+    @inlinable
     static func debug(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -153,6 +156,7 @@ public extension Debug.Log {
     }
 
     @discardableResult
+    @inlinable
     static func debug(
         in scope: Scope? = nil,
         params: @autoclosure () -> [String: Any?]? = nil,
@@ -167,6 +171,7 @@ public extension Debug.Log {
     // MARK: - WARNING
 
     @discardableResult
+    @inlinable
     static func warning(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -179,6 +184,7 @@ public extension Debug.Log {
     }
 
     @discardableResult
+    @inlinable
     static func warning(
         in scope: Scope? = nil,
         params: @autoclosure () -> [String: Any?]? = nil,
@@ -193,6 +199,7 @@ public extension Debug.Log {
     // MARK: - ERROR
 
     @discardableResult
+    @inlinable
     static func error(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -205,6 +212,7 @@ public extension Debug.Log {
     }
 
     @discardableResult
+    @inlinable
     static func error(
         in scope: Scope? = nil,
         params: @autoclosure () -> [String: Any?]? = nil,
@@ -221,6 +229,7 @@ public extension Debug {
     private static var subsystem = Bundle.main.bundleIdentifier!
 
     @discardableResult
+    @inlinable
     static func log(
         _ level: Log.Level,
         in scope: Log.Scope? = nil,
@@ -234,6 +243,7 @@ public extension Debug {
     }
 
     @discardableResult
+    @inlinable
     static func log(
         in scope: Log.Scope? = nil,
         _ message: Any?,
@@ -358,6 +368,7 @@ public extension Debug {
     /// - Parameters:
     ///   - error: The error to log.
     @discardableResult
+    @inlinable
     static func log(
         error: Error?,
         in scope: Log.Scope? = nil,

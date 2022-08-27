@@ -27,6 +27,7 @@ public extension Debug {
         }
     }
 
+    @inlinable
     static func assert(
         _ assertion: () -> Bool,
         message: Any?,
@@ -45,6 +46,7 @@ public extension Debug {
         )
     }
 
+    @inlinable
     static func assert(
         _ assertion: Bool,
         message: Any?,
@@ -66,6 +68,7 @@ public extension Debug {
         )
     }
 
+    @inlinable
     static func assertionFailure(
         scope: Log.Scope? = nil,
         _ message: Any?,
