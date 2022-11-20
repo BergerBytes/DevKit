@@ -111,6 +111,7 @@ public extension Log {
     // MARK: - INFO
 
     @discardableResult
+    @inlinable
     static func info(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -123,6 +124,7 @@ public extension Log {
     }
 
     @discardableResult
+    @inlinable
     static func info(
         in scope: Scope? = nil,
         params: @autoclosure () -> [String: Any?]? = nil,
@@ -137,6 +139,7 @@ public extension Log {
     // MARK: - DEBUG
 
     @discardableResult
+    @inlinable
     static func debug(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -149,6 +152,7 @@ public extension Log {
     }
 
     @discardableResult
+    @inlinable
     static func debug(
         in scope: Scope? = nil,
         params: @autoclosure () -> [String: Any?]? = nil,
@@ -163,6 +167,7 @@ public extension Log {
     // MARK: - WARNING
 
     @discardableResult
+    @inlinable
     static func warning(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -175,6 +180,7 @@ public extension Log {
     }
 
     @discardableResult
+    @inlinable
     static func warning(
         in scope: Scope? = nil,
         params: @autoclosure () -> [String: Any?]? = nil,
@@ -189,6 +195,7 @@ public extension Log {
     // MARK: - ERROR
 
     @discardableResult
+    @inlinable
     static func error(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -201,6 +208,7 @@ public extension Log {
     }
 
     @discardableResult
+    @inlinable
     static func error(
         in scope: Scope? = nil,
         params: @autoclosure () -> [String: Any?]? = nil,
@@ -245,6 +253,7 @@ extension Log {
     private static var subsystem = Bundle.main.bundleIdentifier!
 
     @discardableResult
+    @inlinable
     static func log(
         _ level: Level,
         in scope: Scope? = nil,
@@ -258,6 +267,7 @@ extension Log {
     }
 
     @discardableResult
+    @inlinable
     static func log(
         in scope: Scope? = nil,
         _ message: Any?,
@@ -375,5 +385,30 @@ extension Log {
         }
 
         return log(level, in: scope, computedMessage(), params: nil, file: file, function: function, line: line)
+    }
+
+    /// A convenience log to automatically use the localizedDescription of the given error.
+    ///
+    /// - Parameters:
+    ///   - error: The error to log.
+    @discardableResult
+    @inlinable
+    static func log(
+        error: Error?,
+        in scope: Log.Scope? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        guard let error = error else { return "" }
+
+        return log(
+            .error,
+            in: scope,
+            { error },
+            file: file,
+            function: function,
+            line: line
+        )
     }
 }
