@@ -25,15 +25,15 @@ public enum Log {
     internal static var localLogs = [Int: [String]]()
 
     public struct Configuration {
-        let printToConsole: Bool
-        let printToOS: Bool
-        let blockAllLogs: Bool
+        public let printToConsole: Bool
+        public let printToOS: Bool
+        public let blockAllLogs: Bool
 
         /// Should loggable object have their logs stored in memory.
-        let loggableEnabled: Bool
+        public let loggableEnabled: Bool
 
         // Number of logs to store per loggable object.
-        let loggableLimit: Int
+        public let loggableLimit: Int
 
         public init(
             printToConsole: Bool = true,
@@ -70,7 +70,7 @@ public enum Log {
 
         @available(macOS 10.12, *)
         @available(iOS 10.0, *)
-        var osLogType: OSLogType {
+        public var osLogType: OSLogType {
             switch self {
             case .info:
                 return .info
@@ -250,7 +250,7 @@ public extension Log {
 }
 
 extension Log {
-    private static var subsystem = Bundle.main.bundleIdentifier!
+    public static var subsystem = Bundle.main.bundleIdentifier ?? "unknown"
 
     @discardableResult
     @inlinable
@@ -291,6 +291,7 @@ extension Log {
     /// Debug.log("Hello, World", level: .startup)
     /// ~~~
     @discardableResult
+    @inlinable
     static func log(
         level: Level,
         in scope: Scope? = nil,
@@ -372,6 +373,7 @@ extension Log {
     /// }
     /// ~~~
     @discardableResult
+    @inlinable
     static func log(
         _ level: Level = .standard,
         in scope: Scope? = nil,
@@ -395,7 +397,7 @@ extension Log {
     @inlinable
     static func log(
         error: Error?,
-        in scope: Log.Scope? = nil,
+        in scope: Scope? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line

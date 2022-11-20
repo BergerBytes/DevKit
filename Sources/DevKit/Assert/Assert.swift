@@ -16,11 +16,11 @@ import Foundation
 
 public enum Assert {
     public static var configuration = Configuration()
-
+    
     public struct Configuration {
         public var throwAssertionFailures: Bool = true
         public var checkAssertions: Bool = true
-
+        
         public init(throwAssertionFailures: Bool = true, checkAssertions: Bool = true) {
             self.throwAssertionFailures = throwAssertionFailures
             self.checkAssertions = checkAssertions
