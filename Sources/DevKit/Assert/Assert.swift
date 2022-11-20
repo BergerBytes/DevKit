@@ -26,74 +26,184 @@ public enum Assert {
             self.checkAssertions = checkAssertions
         }
     }
-}
-
-func assert(
-    _ assertion: () -> Bool,
-    message: Any?,
-    params: [String: Any?]? = nil,
-    file: String = #file,
-    function: String = #function,
-    line: Int = #line
-) {
-    guard Assert.configuration.checkAssertions else {
-        return
+    
+    // MARK: - True
+    
+    @inlinable
+    public static func `true`(
+        message: Any?,
+        _ assertion: () -> Bool,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        `true`(
+            message: message,
+            assertion(),
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
     }
-
-    assert(
-        assertion(),
-        message: message,
-        params: params,
-        file: file,
-        function: function,
-        line: line
-    )
-}
-
-func assert(
-    _ assertion: @autoclosure () -> Bool,
-    message: Any?,
-    params: [String: Any?]? = nil,
-    file: String = #file,
-    function: String = #function,
-    line: Int = #line
-) {
-    guard Assert.configuration.checkAssertions else {
-        return
+    
+    @inlinable
+    public static func `true`(
+        message: Any?,
+        _ assertion: @autoclosure () -> Bool,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        if assertion() {
+            return
+        }
+        
+        failure(
+            message,
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
     }
-
-    if assertion() {
-        return
+    
+    // MARK: - False
+    
+    @inlinable
+    public static func `false`(
+        message: Any?,
+        _ assertion: () -> Bool,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        `false`(
+            message: message,
+            assertion(),
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
     }
-
-    assertionFailure(
-        message,
-        params: params,
-        file: file,
-        function: function,
-        line: line
-    )
-}
-
-func assertionFailure(
-    scope: Log.Scope? = nil,
-    _ message: Any?,
-    params: [String: Any?]? = nil,
-    file: String = #file,
-    function: String = #function,
-    line: Int = #line
-) {
-    let log = Log.custom(
-        .error,
-        in: scope,
-        message,
-        params: params,
-        file: file,
-        function: function,
-        line: line
-    )
-
-    if Assert.configuration.throwAssertionFailures {
-        Swift.assertionFailure(log)
+    
+    @inlinable
+    public static func `false`(
+        message: Any?,
+        _ assertion: @autoclosure () -> Bool,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        if !assertion() {
+            return
+        }
+        
+        failure(
+            message,
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
+    
+    // MARK: - Equals
+    
+    @inlinable
+    public static func equal<Value: Equatable>(
+        to value: Value,
+        message: Any?,
+        _ assertion: () -> Value,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        equal(
+            to: value,
+            message: message,
+            assertion(),
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
+    
+    @inlinable
+    public static func equal<Value: Equatable>(
+        to value: Value,
+        message: Any?,
+        _ assertion: @autoclosure () -> Value,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        if value == assertion() {
+            return
+        }
+        
+        failure(
+            message,
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
+    
+    // MARK: - Failure
+    
+    @inlinable
+    public static func failure(
+        scope: Log.Scope? = nil,
+        _ message: Any?,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        if Assert.configuration.throwAssertionFailures {
+            Swift.assertionFailure(Log.custom(
+                .error,
+                in: scope,
+                message,
+                params: params,
+                file: file,
+                function: function,
+                line: line
+            ))
+        }
     }
 }
