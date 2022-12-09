@@ -15,7 +15,7 @@
 import DevKit
 import XCTest
 
-final class DebugTests: XCTestCase {
+final class DevKitTests: XCTestCase {
     func testExample() {
         Log.custom(.warning, "Careful!")
         Log.custom(.warning, in: .startup, "Careful!")
