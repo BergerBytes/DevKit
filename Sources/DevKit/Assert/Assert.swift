@@ -31,6 +31,7 @@ public enum Assert {
     
     @inlinable
     public static func `true`(
+        in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: () -> Bool,
         params: [String: Any?]? = nil,
@@ -43,6 +44,7 @@ public enum Assert {
         }
         
         `true`(
+            in: scope,
             message: message,
             assertion(),
             params: params,
@@ -54,6 +56,7 @@ public enum Assert {
     
     @inlinable
     public static func `true`(
+        in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: @autoclosure () -> Bool,
         params: [String: Any?]? = nil,
@@ -70,6 +73,7 @@ public enum Assert {
         }
         
         failure(
+            in: scope,
             message,
             params: params,
             file: file,
@@ -82,6 +86,7 @@ public enum Assert {
     
     @inlinable
     public static func `false`(
+        in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: () -> Bool,
         params: [String: Any?]? = nil,
@@ -94,6 +99,7 @@ public enum Assert {
         }
         
         `false`(
+            in: scope,
             message: message,
             assertion(),
             params: params,
@@ -105,6 +111,7 @@ public enum Assert {
     
     @inlinable
     public static func `false`(
+        in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: @autoclosure () -> Bool,
         params: [String: Any?]? = nil,
@@ -121,6 +128,7 @@ public enum Assert {
         }
         
         failure(
+            in: scope,
             message,
             params: params,
             file: file,
@@ -134,6 +142,7 @@ public enum Assert {
     @inlinable
     public static func equal<Value: Equatable>(
         to value: Value,
+        in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: () -> Value,
         params: [String: Any?]? = nil,
@@ -147,6 +156,7 @@ public enum Assert {
         
         equal(
             to: value,
+            in: scope,
             message: message,
             assertion(),
             params: params,
@@ -159,6 +169,7 @@ public enum Assert {
     @inlinable
     public static func equal<Value: Equatable>(
         to value: Value,
+        in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: @autoclosure () -> Value,
         params: [String: Any?]? = nil,
@@ -175,6 +186,7 @@ public enum Assert {
         }
         
         failure(
+            in: scope,
             message,
             params: params,
             file: file,
@@ -187,7 +199,7 @@ public enum Assert {
     
     @inlinable
     public static func failure(
-        scope: Log.Scope? = nil,
+        in scope: Log.Scope? = nil,
         _ message: Any?,
         params: [String: Any?]? = nil,
         file: String = #file,
