@@ -402,7 +402,7 @@ extension Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        guard let error = error else { return "" }
+        guard let error else { return "" }
 
         return log(
             .error,
