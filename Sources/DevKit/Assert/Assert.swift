@@ -30,10 +30,10 @@ public enum Assert {
     // MARK: - True
 
     @inlinable
-    public static func `true`(
+    public static func isTrue(
+        _ assertion: () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        _ assertion: () -> Bool,
         params: [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
@@ -43,10 +43,10 @@ public enum Assert {
             return
         }
 
-        `true`(
+        isTrue(
+            assertion(),
             in: scope,
             message: message,
-            assertion(),
             params: params,
             file: file,
             function: function,
@@ -55,10 +55,10 @@ public enum Assert {
     }
 
     @inlinable
-    public static func `true`(
+    public static func isTrue(
+        _ assertion: @autoclosure () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        _ assertion: @autoclosure () -> Bool,
         params: [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
@@ -85,7 +85,7 @@ public enum Assert {
     // MARK: - False
 
     @inlinable
-    public static func `false`(
+    public static func isFalse(
         in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: () -> Bool,
@@ -98,10 +98,10 @@ public enum Assert {
             return
         }
 
-        `false`(
+        isFalse(
+            assertion(),
             in: scope,
             message: message,
-            assertion(),
             params: params,
             file: file,
             function: function,
@@ -110,10 +110,10 @@ public enum Assert {
     }
 
     @inlinable
-    public static func `false`(
+    public static func isFalse(
+        _ assertion: @autoclosure () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        _ assertion: @autoclosure () -> Bool,
         params: [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
@@ -140,11 +140,11 @@ public enum Assert {
     // MARK: - Equals
 
     @inlinable
-    public static func equal<Value: Equatable>(
+    public static func isEqual<Value: Equatable>(
+        _ assertion: () -> Value,
         to value: Value,
         in scope: Log.Scope? = nil,
         message: Any?,
-        _ assertion: () -> Value,
         params: [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
@@ -154,11 +154,11 @@ public enum Assert {
             return
         }
 
-        equal(
+        isEqual(
+            assertion(),
             to: value,
             in: scope,
             message: message,
-            assertion(),
             params: params,
             file: file,
             function: function,
@@ -167,11 +167,11 @@ public enum Assert {
     }
 
     @inlinable
-    public static func equal<Value: Equatable>(
+    public static func isEqual<Value: Equatable>(
+        _ assertion: @autoclosure () -> Value,
         to value: Value,
         in scope: Log.Scope? = nil,
         message: Any?,
-        _ assertion: @autoclosure () -> Value,
         params: [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
@@ -198,10 +198,10 @@ public enum Assert {
     // MARK: - Nil / Not Nil
 
     @inlinable
-    public static func `nil`(
+    public static func isNil(
+        _ assertion: @autoclosure () -> Any?,
         in scope: Log.Scope? = nil,
         message: Any?,
-        _ assertion: @autoclosure () -> Any?,
         params: [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
@@ -226,10 +226,10 @@ public enum Assert {
     }
 
     @inlinable
-    public static func notNil(
+    public static func isNotNil(
+        _ assertion: @autoclosure () -> Any?,
         in scope: Log.Scope? = nil,
         message: Any?,
-        _ assertion: @autoclosure () -> Any?,
         params: [String: Any?]? = nil,
         file: String = #file,
         function: String = #function,
