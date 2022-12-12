@@ -195,6 +195,64 @@ public enum Assert {
         )
     }
     
+    // MARK: - Nil / Not Nil
+    
+    @inlinable
+    public static func `nil`(
+        in scope: Log.Scope? = nil,
+        message: Any?,
+        _ assertion: @autoclosure () -> Optional<Any>,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        if assertion() == nil {
+            return
+        }
+        
+        failure(
+            in: scope,
+            message,
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
+    
+    @inlinable
+    public static func notNil(
+        in scope: Log.Scope? = nil,
+        message: Any?,
+        _ assertion: @autoclosure () -> Optional<Any>,
+        params: [String: Any?]? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        if assertion() != nil {
+            return
+        }
+        
+        failure(
+            in: scope,
+            message,
+            params: params,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
+    
     // MARK: - Failure
     
     @inlinable
