@@ -20,6 +20,9 @@ public enum Log {
     public typealias LogCallback = (Level, Log) -> Void
     public static var configuration = Configuration()
     public static var callback: LogCallback?
+    
+    @available(iOS 15, *)
+    static var logModuleCallback: ((LogEntry) -> Void)?
 
     /// Storage for all local logs made via Loggable conforming objects.
     internal static var localLogs = [Int: [String]]()
@@ -86,24 +89,33 @@ public enum Log {
         }
     }
 
-    public struct Scope: Equatable {
-        public let symbol: String
+    public struct Scope: Equatable, Hashable {
+        public let symbol: Character
+        public let name: String
+        
+        @available(*, deprecated, message: "Scope requires a name and symbols are limited to a single character", renamed: "init(_:name:)")
         public init(_ symbol: String) {
+            self.symbol = symbol.first ?? Character("")
+            self.name = ""
+        }
+        
+        public init(_ symbol: Character, name: String) {
             self.symbol = symbol
+            self.name = name
         }
 
-        public static let database = Scope("💾")
-        public static let auth = Scope("🔒")
-        public static let connection = Scope("🌎")
-        public static let gps = Scope("🗺")
-        public static let startup = Scope("🎬")
-        public static let keychain = Scope("🔑")
-        public static let payment = Scope("💳")
+        public static let database = Scope("💾", name: "Database")
+        public static let auth = Scope("🔒", name: "Authentication")
+        public static let connection = Scope("🌎", name: "Connection")
+        public static let gps = Scope("🗺", name: "GPS")
+        public static let startup = Scope("🎬", name: "Startup")
+        public static let keychain = Scope("🔑", name: "Keychain")
+        public static let payment = Scope("💳", name: "Payment")
 
         // The number types are only used for debugging.
-        public static let one = Scope("1️⃣")
-        public static let two = Scope("2️⃣")
-        public static let three = Scope("3️⃣")
+        public static let one = Scope("1️⃣", name: "Debug 1")
+        public static let two = Scope("2️⃣", name: "Debug 2")
+        public static let three = Scope("3️⃣", name: "Debug 3")
     }
 }
 
@@ -263,7 +275,7 @@ extension Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(level: level, in: scope, message(), params: params(), file: file, function: function, line: line)
+        _log(level: level, in: scope, message(), params: params(), file: file, function: function, line: line)
     }
 
     @discardableResult
@@ -276,7 +288,7 @@ extension Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(level: .standard, in: scope, message, params: params, file: file, function: function, line: line)
+        _log(level: .standard, in: scope, message, params: params, file: file, function: function, line: line)
     }
 
     /// Logs the string representation of the message object to the console
@@ -291,8 +303,7 @@ extension Log {
     /// Debug.log("Hello, World", level: .startup)
     /// ~~~
     @discardableResult
-    @inlinable
-    static func log(
+    public static func _log(
         level: Level,
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
@@ -317,14 +328,12 @@ extension Log {
             .map { String(describing: $0) } ?? ""
 
         // Extract the file name from the path.
-        let fileString = file as NSString
-        let fileLastPathComponent = fileString.lastPathComponent as NSString
-        let fileName = fileLastPathComponent.deletingPathExtension
+        let callSite = formattedCallSite(file: file, function: function, line: line)
 
-        let scope = scope.map { " \($0.symbol) " } ?? " "
+        let scopeString = scope.map { " \($0.symbol) " } ?? " "
 
         let printLog = configuration.printToConsole || configuration.printToOS
-            ? "\(level.symbol)\(scope)\(message)\(paramsSpace)\(paramsString) ->  \(fileName).\(function) [\(line)]"
+            ? "\(level.symbol)\(scopeString)\(message)\(paramsSpace)\(paramsString)  ->  \(callSite)"
             : ""
 
         // Print the log if we are debugging.
@@ -338,21 +347,35 @@ extension Log {
                 #available(macOS 10.12, *),
                 #available(iOS 10.0, *)
             {
-                let printLog = "\(level.symbol) \(message)\(paramsSpace)\(paramsString) ->  \(fileName).\(function) [\(line)]"
+                let printLog = "\(level.symbol) \(message)\(paramsSpace)\(paramsString) ->  \(callSite)"
                 os_log("%@", log: OSLog(subsystem: subsystem, category: file), type: level.osLogType, printLog)
             }
         }
 
         // Build the log; formatting the log into the desired format.
         // This could be expanded on for support for changing the format at runtime or per-developer.
-        let log = "\(level.symbol) \(message) -> \(fileName).\(function) [\(line)]"
+        let log = "\(level.symbol) \(message) -> \(callSite)"
 
         // Invoke the log callback with the generated log
         callback?(level, (log, params))
-
+        
+        if #available(iOS 15, *) {
+            logModuleCallback?(
+                .init(
+                    scope: scope,
+                    level: level,
+                    message: message,
+                    params: params,
+                    file: file,
+                    function: function,
+                    line: line
+                )
+            )
+        }
+        
         return log
     }
-
+    
     /// Logs the return from the provided closure.
     ///
     /// - Parameters:
@@ -412,5 +435,20 @@ extension Log {
             function: function,
             line: line
         )
+    }
+}
+
+public extension Log {
+    @inlinable
+    static func fileName(in path: String) -> String {
+        // Extract the file name from the path.
+        let fileString = path as NSString
+        let fileLastPathComponent = fileString.lastPathComponent as NSString
+        return fileLastPathComponent.deletingPathExtension
+    }
+    
+    @inlinable
+    static func formattedCallSite(file: String, function: String, line: Int) -> String {
+        "\(fileName(in: file)).\(function) [\(line)]"
     }
 }
