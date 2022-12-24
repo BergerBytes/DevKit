@@ -14,39 +14,52 @@
 
 import Foundation
 import QuartzCore
+import Collections
 
 public enum Measure {
     public static var records = [String: Record]()
 
+    static public var moduleListener: (() -> ())?
+    
     @inlinable
     @discardableResult
-    public static func this(
-        name: String? = nil,
-        _ invocation: () -> Void,
+    public static func this<T>(
+        name: @autoclosure () -> String? = nil,
+        _ invocation: () throws -> T,
         file: String = #file,
         function: String = #function,
         line: Int = #line
-    ) -> TimeInterval {
+    ) rethrows -> T {
         let startTime = CACurrentMediaTime()
-        invocation()
+        let value = try invocation()
         let endTime = CACurrentMediaTime()
 
-        let key = name ?? "\(Log.fileName(in: file)).\(function) [\(line)]"
+        let id = name() ?? Log.formattedCallSite(file: file, function: function, line: line)
         let time = endTime - startTime
 
-        if let record = records[key] {
+        if let record = records[id] {
             record.add(time: time)
         } else {
-            records[key] = .init(key: key, time: time)
+            records[id] = .init(id: id, time: time)
         }
+        
+        moduleListener?()
 
-        return time
+        return value
     }
 }
 
 public extension Measure {
-    class Record: CustomDebugStringConvertible {
-        public let key: String
+    class Record: CustomDebugStringConvertible, Identifiable, Equatable {
+        public static func == (lhs: Measure.Record, rhs: Measure.Record) -> Bool {
+            lhs.id == rhs.id &&
+            lhs.lastUpdated == rhs.lastUpdated
+        }
+        
+        public let id: String
+        
+        public var lastUpdated = Date()
+        
         public var mostRecentTime: TimeInterval = 0
         public var averageTime: TimeInterval {
             sum / TimeInterval(count)
@@ -58,18 +71,21 @@ public extension Measure {
         public private(set) var minTime: TimeInterval = .greatestFiniteMagnitude
         public private(set) var maxTime: TimeInterval = .leastNonzeroMagnitude
 
+        private let timelineLimit = 500
+        public private(set) lazy var timeline = Deque<TimelineEntry>(minimumCapacity: timelineLimit)
+        
         public let percentiles = [
-            99: CKMS(percentile: 0.99, reservoirSize: 50),
-            95: CKMS(percentile: 0.95, reservoirSize: 50),
             90: CKMS(percentile: 0.90, reservoirSize: 50),
+            70: CKMS(percentile: 0.70, reservoirSize: 50),
 
-            1: CKMS(percentile: 0.01, reservoirSize: 50),
-            5: CKMS(percentile: 0.05, reservoirSize: 50),
+            50: CKMS(percentile: 0.50, reservoirSize: 50),
+
+            30: CKMS(percentile: 0.30, reservoirSize: 50),
             10: CKMS(percentile: 0.10, reservoirSize: 50),
         ]
 
-        public init(key: String, time: TimeInterval) {
-            self.key = key
+        public init(id: String, time: TimeInterval) {
+            self.id = id
             add(time: time)
         }
 
@@ -90,11 +106,17 @@ public extension Measure {
             percentiles.values.forEach {
                 $0.add(time)
             }
+            
+            lastUpdated = Date()
+            timeline.append(.init(measuredTime: time))
+            if timeline.count >= timelineLimit {
+                _ = timeline.popFirst()
+            }
         }
 
         public var debugDescription: String {
             """
-            Measure Record for: \(key)
+            Measure Record for: \(id)
             mostRecentTime:     \(mostRecentTime)
             averageTime:        \(averageTime)
             """
@@ -103,11 +125,19 @@ public extension Measure {
 }
 
 public extension Measure {
+    struct TimelineEntry: Identifiable {
+        public let id = UUID()
+        let measuredTime: TimeInterval
+        let timestamp: Date = Date()
+    }
+}
+
+public extension Measure {
     class CKMS {
         public let percentile: Double
 
         // The reservoir of values
-        private lazy var values = [TimeInterval]()
+        private var values = [TimeInterval]()
 
         // The size of the reservoir
         private let reservoirSize: Int

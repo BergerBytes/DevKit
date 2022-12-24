@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 @available(iOS 15, *)
 public protocol Module: AnyObject, Identifiable {
     associatedtype Body : View
@@ -16,4 +15,6 @@ public protocol Module: AnyObject, Identifiable {
     
     @ViewBuilder @MainActor
     var content: Self.Body { get }
+    
+    init()
 }

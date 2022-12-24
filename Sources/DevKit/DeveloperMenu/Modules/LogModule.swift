@@ -43,7 +43,7 @@ public class LogModule: Module {
     
     private var logs = OrderedDictionary<Log.Scope, Deque<LogEntry>>()
     
-    public init() {
+    public required init() {
         Log.logModuleCallback = { log in
             self.logs[log.scope, default: .init(minimumCapacity: Int(self.logLimitPerScope))]
                 .prepend(log)

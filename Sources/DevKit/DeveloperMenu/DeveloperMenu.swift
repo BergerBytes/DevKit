@@ -20,8 +20,18 @@ public enum DeveloperMenu {
     private static var modules: [any Module] = []
     static func present() { }
     
-    static public func register(module: any Module) {
-        modules.append(module)
+    static public func register(module: any (Module.Type)) throws {
+        guard !modules.contains(where: { type(of: $0) == module }) else {
+            throw Error.moduleAlreadyRegistered
+        }
+        modules.append(module.init())
+    }
+}
+
+@available(iOS 15.0, *)
+extension DeveloperMenu {
+    public enum Error: LocalizedError {
+        case moduleAlreadyRegistered
     }
 }
 
