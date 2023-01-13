@@ -17,8 +17,8 @@ import OrderedCollections
 import os.log
 
 public enum Log {
-    public typealias Log = (message: String, params: OrderedDictionary<String, Any?>?)
-    public typealias LogCallback = (Level, Log) -> Void
+    public typealias Log = (level: Level, scope: Scope?, message: String, info: OrderedDictionary<String, Any?>?, file: String, function: String, line: Int)
+    public typealias LogCallback = (Log) -> Void
     public static var configuration = Configuration()
     public static var callback: LogCallback?
 
@@ -116,25 +116,25 @@ public extension Log {
     static func info(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(.info, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(.info, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     @discardableResult
     @inlinable
     static func info(
         in scope: Scope? = nil,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
         _ message: () -> Any?
     ) -> String {
-        info(in: scope, message(), params: params(), file: file, function: function, line: line)
+        self.info(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     // MARK: - DEBUG
@@ -144,25 +144,25 @@ public extension Log {
     static func debug(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(.standard, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(.standard, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     @discardableResult
     @inlinable
     static func debug(
         in scope: Scope? = nil,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
         _ message: () -> Any?
     ) -> String {
-        debug(in: scope, message(), params: params(), file: file, function: function, line: line)
+        debug(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     // MARK: - WARNING
@@ -172,25 +172,25 @@ public extension Log {
     static func warning(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(.warning, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(.warning, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     @discardableResult
     @inlinable
     static func warning(
         in scope: Scope? = nil,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
         _ message: () -> Any?
     ) -> String {
-        warning(in: scope, message(), params: params(), file: file, function: function, line: line)
+        warning(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     // MARK: - ERROR
@@ -200,25 +200,25 @@ public extension Log {
     static func error(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(.error, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(.error, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     @discardableResult
     @inlinable
     static func error(
         in scope: Scope? = nil,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
         _ message: () -> Any?
     ) -> String {
-        error(in: scope, message(), params: params(), file: file, function: function, line: line)
+        error(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     // MARK: - CUSTOM
@@ -228,25 +228,25 @@ public extension Log {
         _ level: Level,
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(level, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(level, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     @discardableResult
     static func custom(
         _ level: Level,
         in scope: Scope? = nil,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
         _ message: () -> Any?
     ) -> String {
-        custom(level, in: scope, message(), params: params(), file: file, function: function, line: line)
+        custom(level, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 }
 
@@ -259,12 +259,12 @@ extension Log {
         _ level: Level,
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(level: level, in: scope, message(), params: params(), file: file, function: function, line: line)
+        log(level: level, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     @discardableResult
@@ -272,12 +272,12 @@ extension Log {
     static func log(
         in scope: Scope? = nil,
         _ message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(level: .standard, in: scope, message, params: params, file: file, function: function, line: line)
+        log(level: .standard, in: scope, message, info: info, file: file, function: function, line: line)
     }
 
     /// Logs the string representation of the message object to the console
@@ -297,7 +297,7 @@ extension Log {
         level: Level,
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -310,10 +310,10 @@ extension Log {
         // Convert the message object to a string format. This will convert the same way Xcode would when debugging.
         let message = evaluatedMessage.map { String(describing: $0) } ?? String(describing: evaluatedMessage)
 
-        let params = params()
+        let info = info()
 
-        let paramsSpace = "\(params == nil ? "" : " ")"
-        let paramsString = (params?
+        let infoSpace = "\(info == nil ? "" : " ")"
+        let infoString = (info?
             .mapValues { value in value.map { String(describing: $0) } ?? "nil" })
             .map { String(describing: $0) } ?? ""
 
@@ -322,10 +322,10 @@ extension Log {
         let fileLastPathComponent = fileString.lastPathComponent as NSString
         let fileName = fileLastPathComponent.deletingPathExtension
 
-        let scope = scope.map { " \($0.symbol) " } ?? " "
+        let scopeString = scope.map { " \($0.symbol) " } ?? " "
 
         let printLog = configuration.printToConsole || configuration.printToOS
-            ? "\(level.symbol)\(scope)\(message)\(paramsSpace)\(paramsString) ->  \(fileName).\(function) [\(line)]"
+            ? "\(level.symbol)\(scopeString)\(message)\(infoSpace)\(infoString) ->  \(fileName).\(function) [\(line)]"
             : ""
 
         // Print the log if we are debugging.
@@ -339,7 +339,7 @@ extension Log {
                 #available(macOS 10.12, *),
                 #available(iOS 10.0, *)
             {
-                let printLog = "\(level.symbol) \(message)\(paramsSpace)\(paramsString) ->  \(fileName).\(function) [\(line)]"
+                let printLog = "\(level.symbol) \(message)\(infoSpace)\(infoString) ->  \(fileName).\(function) [\(line)]"
                 os_log("%@", log: OSLog(subsystem: subsystem, category: file), type: level.osLogType, printLog)
             }
         }
@@ -349,7 +349,7 @@ extension Log {
         let log = "\(level.symbol) \(message) -> \(fileName).\(function) [\(line)]"
 
         // Invoke the log callback with the generated log
-        callback?(level, (log, params))
+        callback?((level, scope, message, info, file, function, line))
 
         return log
     }
@@ -387,7 +387,7 @@ extension Log {
             return ""
         }
 
-        return log(level, in: scope, computedMessage(), params: nil, file: file, function: function, line: line)
+        return log(level, in: scope, computedMessage(), info: nil, file: file, function: function, line: line)
     }
 
     /// A convenience log to automatically use the localizedDescription of the given error.

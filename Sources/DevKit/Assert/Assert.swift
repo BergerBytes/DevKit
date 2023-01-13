@@ -35,7 +35,7 @@ public enum Assert {
         _ assertion: () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -48,7 +48,7 @@ public enum Assert {
             assertion(),
             in: scope,
             message: message,
-            params: params,
+            info: info,
             file: file,
             function: function,
             line: line
@@ -60,7 +60,7 @@ public enum Assert {
         _ assertion: @autoclosure () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -76,7 +76,7 @@ public enum Assert {
         failure(
             in: scope,
             message,
-            params: params,
+            info: info,
             file: file,
             function: function,
             line: line
@@ -90,7 +90,7 @@ public enum Assert {
         in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: () -> Bool,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -103,7 +103,7 @@ public enum Assert {
             assertion(),
             in: scope,
             message: message,
-            params: params,
+            info: info,
             file: file,
             function: function,
             line: line
@@ -115,7 +115,7 @@ public enum Assert {
         _ assertion: @autoclosure () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -131,7 +131,7 @@ public enum Assert {
         failure(
             in: scope,
             message,
-            params: params,
+            info: info,
             file: file,
             function: function,
             line: line
@@ -146,7 +146,7 @@ public enum Assert {
         to value: Value,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -160,7 +160,7 @@ public enum Assert {
             to: value,
             in: scope,
             message: message,
-            params: params,
+            info: info,
             file: file,
             function: function,
             line: line
@@ -173,7 +173,7 @@ public enum Assert {
         to value: Value,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -189,7 +189,7 @@ public enum Assert {
         failure(
             in: scope,
             message,
-            params: params,
+            info: info,
             file: file,
             function: function,
             line: line
@@ -203,7 +203,7 @@ public enum Assert {
         _ assertion: @autoclosure () -> Any?,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -219,7 +219,7 @@ public enum Assert {
         failure(
             in: scope,
             message,
-            params: params,
+            info: info,
             file: file,
             function: function,
             line: line
@@ -231,7 +231,7 @@ public enum Assert {
         _ assertion: @autoclosure () -> Any?,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -247,7 +247,7 @@ public enum Assert {
         failure(
             in: scope,
             message,
-            params: params,
+            info: info,
             file: file,
             function: function,
             line: line
@@ -260,7 +260,7 @@ public enum Assert {
     public static func failure(
         in scope: Log.Scope? = nil,
         _ message: Any?,
-        params: OrderedDictionary<String, Any?>? = nil,
+        info: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -270,7 +270,7 @@ public enum Assert {
                 .error,
                 in: scope,
                 message,
-                params: params,
+                info: info,
                 file: file,
                 function: function,
                 line: line

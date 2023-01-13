@@ -26,7 +26,7 @@ final class DevKitTests: XCTestCase {
 
         Log.debug(in: .database, "Missed cache hit")
 
-        Log.warning(in: .database, "Missing data!", params: ["collection": "store"])
+        Log.warning(in: .database, "Missing data!", info: ["collection": "store"])
 
         Log.error(in: .database, "ALL DATA GONE!")
     }
