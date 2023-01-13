@@ -87,10 +87,14 @@ public enum Log {
         }
     }
 
-    public struct Scope: Equatable {
+    public struct Scope: Equatable, CustomStringConvertible {
         public let symbol: String
         public init(_ symbol: String) {
             self.symbol = symbol
+        }
+        
+        public var description: String {
+            symbol
         }
 
         public static let database = Scope("💾")
