@@ -118,6 +118,34 @@ public enum Log {
 }
 
 public extension Log {
+    // MARK: - VERBOSE
+
+    @discardableResult
+    @inlinable
+    static func verbose(
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(.verbose, in: scope, message(), info: info(), file: file, function: function, line: line)
+    }
+
+    @discardableResult
+    @inlinable
+    static func verbose(
+        in scope: Scope? = nil,
+        info: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        self.verbose(in: scope, message(), info: info(), file: file, function: function, line: line)
+    }
+    
     // MARK: - INFO
 
     @discardableResult
