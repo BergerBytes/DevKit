@@ -136,6 +136,34 @@ public extension Log {
     ) -> String {
         self.info(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
+    
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func info(
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(.info, in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
+
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func info(
+        in scope: Scope? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        self.info(in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
 
     // MARK: - DEBUG
 
@@ -163,6 +191,34 @@ public extension Log {
         _ message: () -> Any?
     ) -> String {
         debug(in: scope, message(), info: info(), file: file, function: function, line: line)
+    }
+    
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func debug(
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(.standard, in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
+
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func debug(
+        in scope: Scope? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        debug(in: scope, message(), info: params(), file: file, function: function, line: line)
     }
 
     // MARK: - WARNING
@@ -192,6 +248,34 @@ public extension Log {
     ) -> String {
         warning(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
+    
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func warning(
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(.warning, in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
+
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func warning(
+        in scope: Scope? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        warning(in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
 
     // MARK: - ERROR
 
@@ -219,6 +303,34 @@ public extension Log {
         _ message: () -> Any?
     ) -> String {
         error(in: scope, message(), info: info(), file: file, function: function, line: line)
+    }
+    
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func error(
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(.error, in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
+
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func error(
+        in scope: Scope? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        error(in: scope, message(), info: params(), file: file, function: function, line: line)
     }
 
     // MARK: - CUSTOM
@@ -248,6 +360,34 @@ public extension Log {
     ) -> String {
         custom(level, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
+    
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    static func custom(
+        _ level: Level,
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(level, in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
+
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    static func custom(
+        _ level: Level,
+        in scope: Scope? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line,
+        _ message: () -> Any?
+    ) -> String {
+        custom(level, in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
 }
 
 extension Log {
@@ -266,6 +406,21 @@ extension Log {
     ) -> String {
         log(level: level, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
+    
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func log(
+        _ level: Level,
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(level: level, in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
 
     @discardableResult
     @inlinable
@@ -279,7 +434,36 @@ extension Log {
     ) -> String {
         log(level: .standard, in: scope, message, info: info, file: file, function: function, line: line)
     }
+    
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func log(
+        in scope: Scope? = nil,
+        _ message: Any?,
+        params: OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        log(level: .standard, in: scope, message, info: params, file: file, function: function, line: line)
+    }
 
+    @available(*, deprecated, message: "params has been renamed to info")
+    @discardableResult
+    @inlinable
+    static func log(
+        level: Level,
+        in scope: Scope? = nil,
+        _ message: @autoclosure () -> Any?,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>?,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) -> String {
+        self.log(level: level, in: scope, message(), info: params(), file: file, function: function, line: line)
+    }
+    
     /// Logs the string representation of the message object to the console
     /// along with the type and location of the call.
     ///
