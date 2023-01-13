@@ -13,10 +13,11 @@
 //  IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import Foundation
+import OrderedCollections
 import os.log
 
 public enum Log {
-    public typealias Log = (message: String, params: [String: Any?]?)
+    public typealias Log = (message: String, params: OrderedDictionary<String, Any?>?)
     public typealias LogCallback = (Level, Log) -> Void
     public static var configuration = Configuration()
     public static var callback: LogCallback?
@@ -115,7 +116,7 @@ public extension Log {
     static func info(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -127,7 +128,7 @@ public extension Log {
     @inlinable
     static func info(
         in scope: Scope? = nil,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
@@ -143,7 +144,7 @@ public extension Log {
     static func debug(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -155,7 +156,7 @@ public extension Log {
     @inlinable
     static func debug(
         in scope: Scope? = nil,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
@@ -171,7 +172,7 @@ public extension Log {
     static func warning(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -183,7 +184,7 @@ public extension Log {
     @inlinable
     static func warning(
         in scope: Scope? = nil,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
@@ -199,7 +200,7 @@ public extension Log {
     static func error(
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -211,7 +212,7 @@ public extension Log {
     @inlinable
     static func error(
         in scope: Scope? = nil,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
@@ -227,7 +228,7 @@ public extension Log {
         _ level: Level,
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -239,7 +240,7 @@ public extension Log {
     static func custom(
         _ level: Level,
         in scope: Scope? = nil,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line,
@@ -258,7 +259,7 @@ extension Log {
         _ level: Level,
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -271,7 +272,7 @@ extension Log {
     static func log(
         in scope: Scope? = nil,
         _ message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -296,7 +297,7 @@ extension Log {
         level: Level,
         in scope: Scope? = nil,
         _ message: @autoclosure () -> Any?,
-        params: @autoclosure () -> [String: Any?]? = nil,
+        params: @autoclosure () -> OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line

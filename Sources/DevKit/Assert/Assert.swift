@@ -13,6 +13,7 @@
 //  IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import Foundation
+import OrderedCollections
 
 public enum Assert {
     public static var configuration = Configuration()
@@ -34,7 +35,7 @@ public enum Assert {
         _ assertion: () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -59,7 +60,7 @@ public enum Assert {
         _ assertion: @autoclosure () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -89,7 +90,7 @@ public enum Assert {
         in scope: Log.Scope? = nil,
         message: Any?,
         _ assertion: () -> Bool,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -114,7 +115,7 @@ public enum Assert {
         _ assertion: @autoclosure () -> Bool,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -145,7 +146,7 @@ public enum Assert {
         to value: Value,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -172,7 +173,7 @@ public enum Assert {
         to value: Value,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -202,7 +203,7 @@ public enum Assert {
         _ assertion: @autoclosure () -> Any?,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -230,7 +231,7 @@ public enum Assert {
         _ assertion: @autoclosure () -> Any?,
         in scope: Log.Scope? = nil,
         message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -259,7 +260,7 @@ public enum Assert {
     public static func failure(
         in scope: Log.Scope? = nil,
         _ message: Any?,
-        params: [String: Any?]? = nil,
+        params: OrderedDictionary<String, Any?>? = nil,
         file: String = #file,
         function: String = #function,
         line: Int = #line
