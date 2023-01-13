@@ -64,10 +64,15 @@ public enum Log {
             self.symbol = symbol
         }
 
+        public static let verbose = Level("⚫️")
+        public static let debug = Level("🔵")
+        
+        @available(*, deprecated, renamed: "debug")
+        public static let standard = debug
+        
         public static let info = Level("⚪️")
-        public static let standard = Level("🔵")
-        public static let warning = Level("⚠️")
-        public static let error = Level("❌")
+        public static let warning = Level("🟡")
+        public static let error = Level("🔴")
 
         @available(macOS 10.12, *)
         @available(iOS 10.0, *)
@@ -79,7 +84,7 @@ public enum Log {
                 return .fault
             case .error:
                 return .error
-            case .standard:
+            case .debug:
                 return .debug
             default:
                 return .debug
@@ -181,7 +186,7 @@ public extension Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(.standard, in: scope, message(), info: info(), file: file, function: function, line: line)
+        log(.debug, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
 
     @discardableResult
@@ -436,7 +441,7 @@ extension Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        log(level: .standard, in: scope, message, info: info, file: file, function: function, line: line)
+        log(level: .debug, in: scope, message, info: info, file: file, function: function, line: line)
     }
     
     @available(*, deprecated, message: "params has been renamed to info")
@@ -564,7 +569,7 @@ extension Log {
     @discardableResult
     @inlinable
     static func log(
-        _ level: Level = .standard,
+        _ level: Level = .info,
         in scope: Scope? = nil,
         _ computedMessage: () -> Any?,
         file: String = #file,

@@ -5,7 +5,7 @@ public protocol Loggable: Hashable { }
 public extension Loggable {
     @discardableResult
     func log(
-        _ level: Log.Level = .standard,
+        _ level: Log.Level = .info,
         in scope: Log.Scope? = nil,
         _ computedMessage: @escaping () -> Any?,
         file: String = #file,
