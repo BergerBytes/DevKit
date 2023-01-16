@@ -266,7 +266,26 @@ public enum Assert {
         line: Int = #line
     ) {
         if Assert.configuration.throwAssertionFailures {
-            Swift.assertionFailure(Log.custom(
+            Swift.assertionFailure(
+                Log.custom(
+                    .error,
+                    in: scope,
+                    message,
+                    info: info,
+                    file: file,
+                    function: function,
+                    line: line
+                )
+            )
+
+            return
+        }
+
+        if
+            Assert.configuration.throwAssertionFailures == false,
+            Log.configuration.blockAllLogs == false
+        {
+            Log.custom(
                 .error,
                 in: scope,
                 message,
@@ -274,7 +293,7 @@ public enum Assert {
                 file: file,
                 function: function,
                 line: line
-            ))
+            )
         }
     }
 }
