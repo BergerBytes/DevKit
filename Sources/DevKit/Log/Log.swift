@@ -66,10 +66,10 @@ public enum Log {
 
         public static let verbose = Level("⚫️")
         public static let debug = Level("🔵")
-        
+
         @available(*, deprecated, renamed: "debug")
         public static let standard = debug
-        
+
         public static let info = Level("⚪️")
         public static let warning = Level("🟡")
         public static let error = Level("🔴")
@@ -97,7 +97,7 @@ public enum Log {
         public init(_ symbol: String) {
             self.symbol = symbol
         }
-        
+
         public var description: String {
             symbol
         }
@@ -143,9 +143,9 @@ public extension Log {
         line: Int = #line,
         _ message: () -> Any?
     ) -> String {
-        self.verbose(in: scope, message(), info: info(), file: file, function: function, line: line)
+        verbose(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
-    
+
     // MARK: - INFO
 
     @discardableResult
@@ -173,7 +173,7 @@ public extension Log {
     ) -> String {
         self.info(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
-    
+
     @available(*, deprecated, message: "params has been renamed to info")
     @discardableResult
     @inlinable
@@ -199,7 +199,7 @@ public extension Log {
         line: Int = #line,
         _ message: () -> Any?
     ) -> String {
-        self.info(in: scope, message(), info: params(), file: file, function: function, line: line)
+        info(in: scope, message(), info: params(), file: file, function: function, line: line)
     }
 
     // MARK: - DEBUG
@@ -229,7 +229,7 @@ public extension Log {
     ) -> String {
         debug(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
-    
+
     @available(*, deprecated, message: "params has been renamed to info")
     @discardableResult
     @inlinable
@@ -285,7 +285,7 @@ public extension Log {
     ) -> String {
         warning(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
-    
+
     @available(*, deprecated, message: "params has been renamed to info")
     @discardableResult
     @inlinable
@@ -341,7 +341,7 @@ public extension Log {
     ) -> String {
         error(in: scope, message(), info: info(), file: file, function: function, line: line)
     }
-    
+
     @available(*, deprecated, message: "params has been renamed to info")
     @discardableResult
     @inlinable
@@ -397,7 +397,7 @@ public extension Log {
     ) -> String {
         custom(level, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
-    
+
     @available(*, deprecated, message: "params has been renamed to info")
     @discardableResult
     static func custom(
@@ -443,7 +443,7 @@ extension Log {
     ) -> String {
         log(level: level, in: scope, message(), info: info(), file: file, function: function, line: line)
     }
-    
+
     @available(*, deprecated, message: "params has been renamed to info")
     @discardableResult
     @inlinable
@@ -471,7 +471,7 @@ extension Log {
     ) -> String {
         log(level: .debug, in: scope, message, info: info, file: file, function: function, line: line)
     }
-    
+
     @available(*, deprecated, message: "params has been renamed to info")
     @discardableResult
     @inlinable
@@ -498,9 +498,9 @@ extension Log {
         function: String = #function,
         line: Int = #line
     ) -> String {
-        self.log(level: level, in: scope, message(), info: params(), file: file, function: function, line: line)
+        log(level: level, in: scope, message(), info: params(), file: file, function: function, line: line)
     }
-    
+
     /// Logs the string representation of the message object to the console
     /// along with the type and location of the call.
     ///
@@ -545,13 +545,11 @@ extension Log {
 
         let scopeString = scope.map { " \($0.symbol) " } ?? " "
 
-        let printLog = configuration.printToConsole || configuration.printToOS
-            ? "\(level.symbol)\(scopeString)\(message)\(infoSpace)\(infoString) ->  \(fileName).\(function) [\(line)]"
-            : ""
-
+        let formattedConsoleLog = "\(level.symbol)\(scopeString)\(message)\(infoSpace)\(infoString) -> \(fileName).\(function) [\(line)]"
+        
         // Print the log if we are debugging.
         if configuration.printToConsole {
-            print(printLog)
+            print(formattedConsoleLog)
         }
 
         // Send the log to the OS to allow for seeing logs when running on a disconnected device using Console.app
@@ -571,6 +569,15 @@ extension Log {
 
         // Invoke the log callback with the generated log
         callback?((level, scope, message, info, file, function, line))
+
+        NotificationCenter.default.post(
+            name: .devKit.didReceiveLog,
+            object: nil,
+            userInfo: [
+                "log": Log(level, scope, message, info, file, function, line),
+                "formattedLog": formattedConsoleLog,
+            ]
+        )
 
         return log
     }
