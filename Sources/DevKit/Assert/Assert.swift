@@ -195,6 +195,62 @@ public enum Assert {
             line: line
         )
     }
+    
+    @inlinable
+    public static func isNotEqual<Value: Equatable>(
+        _ assertion: () -> Value,
+        to value: Value,
+        in scope: Log.Scope? = nil,
+        message: Any?,
+        info: OrderedDictionary<String, Any?>? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        isNotEqual(
+            assertion(),
+            to: value,
+            in: scope,
+            message: message,
+            info: info,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
+    
+    @inlinable
+    public static func isNotEqual<Value: Equatable>(
+        _ assertion: @autoclosure () -> Value,
+        to value: Value,
+        in scope: Log.Scope? = nil,
+        message: Any?,
+        info: OrderedDictionary<String, Any?>? = nil,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        guard Assert.configuration.checkAssertions else {
+            return
+        }
+        
+        if value != assertion() {
+            return
+        }
+        
+        failure(
+            in: scope,
+            message,
+            info: info,
+            file: file,
+            function: function,
+            line: line
+        )
+    }
 
     // MARK: - Nil / Not Nil
 
